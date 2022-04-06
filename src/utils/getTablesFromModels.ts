@@ -4,6 +4,12 @@ import reverseSequelizeColType from "./reverseSequelizeColType";
 import reverseSequelizeDefValueType from "./reverseSequelizeDefValueType";
 import parseIndex from "./parseIndex";
 
+const camelToSnake = (string) => {
+  return string.replace(/[\w]([A-Z])/g, function(m) {
+    return m[0] + "_" + m[1];
+  }).toLowerCase();
+}
+
 export default function reverseModels(
   sequelize: Sequelize,
   models: {
@@ -20,6 +26,10 @@ export default function reverseModels(
 
     for (let [column, attribute] of Object.entries(attributes)) {
       let rowAttribute = {};
+
+      if(model.options.underscored) {
+        column = camelToSnake(column)
+      }
 
       if (attribute.defaultValue) {
         const _val = reverseSequelizeDefValueType(attribute.defaultValue);
